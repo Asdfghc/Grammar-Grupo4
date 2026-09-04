@@ -151,11 +151,11 @@ class Grammar:
             # Se o símbolo for não terminal, adicione seu conjunto FIRST
             else:
                 # Se o símbolo puder produzir EPSILON e não for o último símbolo, adicione FIRST sem EPSILON
-                if (EPSILON in self.first.get(symbol, set()) and symbol != symbols[-1]):
-                    result.update((self.first.get(symbol, set()) - {EPSILON}))
+                if (EPSILON in self.first[symbol] and symbol != symbols[-1]):
+                    result.update((self.first[symbol] - {EPSILON}))
                 # Senão, adicione o conjunto FIRST do símbolo e pare
                 else:
-                    result.update(self.first.get(symbol, set()))
+                    result.update(self.first[symbol])
                     break
         
         return result
