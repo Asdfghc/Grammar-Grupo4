@@ -190,7 +190,38 @@ class Grammar:
 
     def build_follow(self) -> None:
         """Preencha self.follow; FIRST deve ter sido calculado antes."""
-        raise NotImplementedError("implemente FOLLOW")
+        
+        # Inicializar FOLLOW para cada não terminal
+        for nonterminal in self.nonterminals:
+            self.follow[nonterminal] = set()
+        self.follow[self.start_symbol].add(EOF)
+        
+        changed = True
+        while (changed):
+            changed = False
+            
+            for nonterminal in self.nonterminals:
+                for production in self._by_lhs[nonterminal]:
+                    # Tamanho antigo para verificar se houve mudanças
+                    old_size = len(self.follow[nonterminal])
+                    
+                    # Trailer <- FOLLOW(A)
+                    trailer = self.follow[nonterminal].copy()
+                    for symbol in reversed(production.rhs):
+                        if symbol in self.nonterminals:
+                            # Adicione o trailer ao FOLLOW do símbolo
+                            self.follow[symbol].update(trailer)
+                            
+                            # Atualize o trailer para o próximo símbolo
+                            if EPSILON in self.first[symbol]:
+                                trailer.update(self.first[symbol] - {EPSILON})
+                            else:
+                                trailer = self.first[symbol].copy()
+                        else:
+                            trailer = {symbol}
+                    
+        return
+        
 
     def build_start(self) -> None:
         """Associe a cada produção seu conjunto START."""
